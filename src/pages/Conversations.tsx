@@ -1,37 +1,42 @@
-import React from 'react';
+import { useState, useEffect } from 'react';
 import { Search, Filter, MessageSquare, User, Clock } from 'lucide-react';
+import axios from 'axios';
 
-const conversationsData = [
-  {
-    id: 1,
-    leadName: 'John Smith',
-    company: 'Tech Solutions Inc',
-    lastMessage: 'Discussed product features and pricing options...',
-    timestamp: '10 mins ago',
-    status: 'Positive',
-    duration: '12:45',
-  },
-  {
-    id: 2,
-    leadName: 'Sarah Johnson',
-    company: 'Healthcare Plus',
-    lastMessage: 'Scheduled a follow-up demo for next week...',
-    timestamp: '2 hours ago',
-    status: 'Neutral',
-    duration: '08:30',
-  },
-  {
-    id: 3,
-    leadName: 'Michael Chen',
-    company: 'Global Finance Ltd',
-    lastMessage: 'Requested more information about enterprise plan...',
-    timestamp: '1 day ago',
-    status: 'Positive',
-    duration: '15:20',
-  },
-];
+interface Conversation {
+  id: number;
+  leadName: string;
+  company: string;
+  lastMessage: string;
+  timestamp: string;
+  status: string;
+  duration: string;
+}
 
 const Conversations = () => {
+  const [conversationsData, setConversationsData] = useState<Conversation[]>([]);
+  const [searchTerm, setSearchTerm] = useState<string>('');
+
+  useEffect(() => {
+    const fetchConversations = async () => {
+      try {
+        const response = await axios.get('http://localhost:3001/api/conversations');
+        setConversationsData(response.data);
+      } catch (error) {
+        console.error('Error fetching conversations data:', error);
+      }
+    };
+
+    fetchConversations();
+  }, []);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const handleFilterClick = () => {
+    alert('Filter button clicked');
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -41,10 +46,15 @@ const Conversations = () => {
             type="text"
             placeholder="Search conversations..."
             className="pl-10 pr-4 py-2 border rounded-lg w-80"
+            value={searchTerm}
+            onChange={handleSearchChange}
           />
         </div>
         <div className="flex gap-4">
-          <button className="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-gray-50">
+          <button
+            className="flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-gray-50"
+            onClick={handleFilterClick}
+          >
             <Filter className="h-5 w-5" />
             <span>Filter</span>
           </button>

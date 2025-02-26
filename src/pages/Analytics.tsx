@@ -1,26 +1,41 @@
-import React from 'react';
+import { useState, useEffect, ChangeEvent } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
 import StatCard from '../components/StatCard';
 import { Phone, UserCheck, Clock, TrendingUp } from 'lucide-react';
-
-const performanceData = [
-  { day: 'Mon', calls: 120, success: 80 },
-  { day: 'Tue', calls: 150, success: 95 },
-  { day: 'Wed', calls: 180, success: 120 },
-  { day: 'Thu', calls: 140, success: 85 },
-  { day: 'Fri', calls: 160, success: 100 },
-];
-
-const conversionData = [
-  { month: 'Jan', rate: 25 },
-  { month: 'Feb', rate: 30 },
-  { month: 'Mar', rate: 28 },
-  { month: 'Apr', rate: 35 },
-  { month: 'May', rate: 32 },
-  { month: 'Jun', rate: 40 },
-];
+import axios from 'axios';
 
 const Analytics = () => {
+  const [performanceData, setPerformanceData] = useState([]);
+  const [conversionData, setConversionData] = useState([]);
+
+  useEffect(() => {
+    const fetchPerformanceData = async () => {
+      try {
+        const response = await axios.get('http://localhost:3001/api/analytics/performance');
+        setPerformanceData(response.data);
+      } catch (error) {
+        console.error('Error fetching performance data:', error);
+      }
+    };
+
+    const fetchConversionData = async () => {
+      try {
+        const response = await axios.get('http://localhost:3001/api/analytics/conversion');
+        setConversionData(response.data);
+      } catch (error) {
+        console.error('Error fetching conversion data:', error);
+      }
+    };
+
+    fetchPerformanceData();
+    fetchConversionData();
+  }, []);
+
+  const handleTimeRangeChange = (event: ChangeEvent<HTMLSelectElement>) => {
+    // Implement time range change logic here
+    console.log('Time range changed to:', event.target.value);
+  };
+
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -60,8 +75,8 @@ const Analytics = () => {
                 <XAxis dataKey="day" />
                 <YAxis />
                 <Tooltip />
-                <Bar dataKey="calls" name="Total Calls" fill="#3b82f6" />
-                <Bar dataKey="success" name="Successful Calls" fill="#10b981" />
+                <Bar dataKey="calls" name="Total Calls" fill="#6ce3e1" />
+                <Bar dataKey="success" name="Successful Calls" fill="#a2f3f5" />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -80,7 +95,7 @@ const Analytics = () => {
                   type="monotone"
                   dataKey="rate"
                   name="Conversion Rate"
-                  stroke="#3b82f6"
+                  stroke="#a2f3f5"
                   strokeWidth={2}
                 />
               </LineChart>

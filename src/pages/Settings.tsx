@@ -1,7 +1,46 @@
-import React from 'react';
-import { Bell, Phone, User, Shield, Database, Headphones, Globe } from 'lucide-react';
+//// filepath: /c:/Users/Ahmer/Downloads/AI cold caller/project 2/react-frontend/src/pages/Settings.tsx
+import React, { useState, useEffect } from 'react';
+import { Bell, Phone, User, Shield, Database } from 'lucide-react';
+import { getSettings, updateSettings } from '../settingsService';
 
 const Settings = () => {
+  const [settings, setSettings] = useState({
+    companyName: '',
+    timeZone: '',
+    pushNotifications: false,
+    callNotifications: false,
+  });
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const data = await getSettings();
+        setSettings(data);
+      } catch (error) {
+        console.error('Error fetching settings:', error);
+      }
+    };
+
+    fetchSettings();
+  }, []);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value, type, checked } = e.target as HTMLInputElement;
+    setSettings((prevSettings) => ({
+      ...prevSettings,
+      [name]: type === 'checkbox' ? checked : value,
+    }));
+  };
+
+  const handleSave = async () => {
+    try {
+      await updateSettings(settings);
+      alert('Settings updated successfully');
+    } catch (error) {
+      console.error('Error updating settings:', error);
+    }
+  };
+
   return (
     <div className="max-w-4xl space-y-6">
       <div className="bg-white rounded-lg shadow">
@@ -16,16 +55,23 @@ const Settings = () => {
               <label className="block text-sm font-medium text-gray-700">Company Name</label>
               <input
                 type="text"
+                name="companyName"
                 className="w-full px-3 py-2 border rounded-lg"
-                defaultValue="Solvevare"
+                value={settings.companyName}
+                onChange={handleInputChange}
               />
             </div>
             <div className="space-y-2">
               <label className="block text-sm font-medium text-gray-700">Time Zone</label>
-              <select className="w-full px-3 py-2 border rounded-lg">
-                <option>Eastern Time (ET)</option>
-                <option>Pacific Time (PT)</option>
-                <option>Central Time (CT)</option>
+              <select
+                name="timeZone"
+                className="w-full px-3 py-2 border rounded-lg"
+                value={settings.timeZone}
+                onChange={handleInputChange}
+              >
+                <option value="ET">Eastern Time (ET)</option>
+                <option value="PT">Pacific Time (PT)</option>
+                <option value="CT">Central Time (CT)</option>
               </select>
             </div>
           </div>
@@ -42,8 +88,14 @@ const Settings = () => {
                   </div>
                 </div>
                 <label className="relative inline-flex items-center cursor-pointer">
-                  <input type="checkbox" className="sr-only peer" defaultChecked />
-                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after :h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                  <input
+                    type="checkbox"
+                    name="pushNotifications"
+                    className="sr-only peer"
+                    checked={settings.pushNotifications}
+                    onChange={handleInputChange}
+                  />
+                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-cyan-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-600"></div>
                 </label>
               </div>
 
@@ -56,8 +108,14 @@ const Settings = () => {
                   </div>
                 </div>
                 <label className="relative inline-flex items-center cursor-pointer">
-                  <input type="checkbox" className="sr-only peer" defaultChecked />
-                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                  <input
+                    type="checkbox"
+                    name="callNotifications"
+                    className="sr-only peer"
+                    checked={settings.callNotifications}
+                    onChange={handleInputChange}
+                  />
+                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-cyan-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-600"></div>
                 </label>
               </div>
             </div>
@@ -68,43 +126,50 @@ const Settings = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-white p-6 rounded-lg shadow">
           <div className="flex items-center gap-3 mb-4">
-            <div className="p-2 bg-blue-50 rounded-lg">
-              <User className="h-6 w-6 text-blue-600" />
+            <div className="p-2 bg-cyan-50 rounded-lg">
+              <User className="h-6 w-6 text-cyan-600" />
             </div>
             <h3 className="font-medium">User Management</h3>
           </div>
           <p className="text-gray-600 text-sm">Manage team members and their access levels</p>
-          <button className="mt-4 w-full px-4 py-2 text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50">
+          <button className="mt-4 w-full px-4 py-2 text-cyan-600 border border-cyan-600 rounded-lg hover:bg-cyan-50">
             Manage Users
           </button>
         </div>
 
         <div className="bg-white p-6 rounded-lg shadow">
           <div className="flex items-center gap-3 mb-4">
-            <div className="p-2 bg-blue-50 rounded-lg">
-              <Shield className="h-6 w-6 text-blue-600" />
+            <div className="p-2 bg-cyan-50 rounded-lg">
+              <Shield className="h-6 w-6 text-cyan-600" />
             </div>
             <h3 className="font-medium">Security</h3>
           </div>
           <p className="text-gray-600 text-sm">Configure security settings and permissions</p>
-          <button className="mt-4 w-full px-4 py-2 text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50">
+          <button className="mt-4 w-full px-4 py-2 text-cyan-600 border border-cyan-600 rounded-lg hover:bg-cyan-50">
             Security Settings
           </button>
         </div>
 
         <div className="bg-white p-6 rounded-lg shadow">
           <div className="flex items-center gap-3 mb-4">
-            <div className="p-2 bg-blue-50 rounded-lg">
-              <Database className="h-6 w-6 text-blue-600" />
+            <div className="p-2 bg-cyan-50 rounded-lg">
+              <Database className="h-6 w-6 text-cyan-600" />
             </div>
             <h3 className="font-medium">Data Management</h3>
           </div>
           <p className="text-gray-600 text-sm">Manage your data and export options</p>
-          <button className="mt-4 w-full px-4 py-2 text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50">
+          <button className="mt-4 w-full px-4 py-2 text-cyan-600 border border-cyan-600 rounded-lg hover:bg-cyan-50">
             Manage Data
           </button>
         </div>
       </div>
+
+      <button
+        className="mt-6 w-full px-4 py-2 text-white bg-cyan-600 rounded-lg hover:bg-cyan-700"
+        onClick={handleSave}
+      >
+        Save Settings
+      </button>
     </div>
   );
 };

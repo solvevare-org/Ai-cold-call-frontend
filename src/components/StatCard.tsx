@@ -2,7 +2,7 @@ import React from 'react';
 import { DivideIcon as LucideIcon } from 'lucide-react';
 
 interface StatCardProps {
-  icon: LucideIcon;
+  icon: typeof LucideIcon;
   title: string;
   value: string | number;
   subtext?: string;
@@ -22,8 +22,8 @@ const StatCard: React.FC<StatCardProps> = ({
   return (
     <div className="bg-white p-6 rounded-xl shadow-sm">
       <div className="flex items-center gap-4">
-        <div className="p-3 bg-blue-50 rounded-lg">
-          <Icon className="h-6 w-6 text-blue-600" />
+        <div className="p-3 bg-cyan-200 rounded-lg">
+          <Icon className="h-6 w-6 text-zinc-50" />
         </div>
         <div>
           <h3 className="text-gray-600 text-sm">{title}</h3>
@@ -32,7 +32,7 @@ const StatCard: React.FC<StatCardProps> = ({
             {trend && (
               <span
                 className={`text-sm ${
-                  trend.isPositive ? 'text-green-500' : 'text-red-500'
+                  trend.isPositive ? 'text-grey-500' : 'text-red-500'
                 }`}
               >
                 {trend.value}
