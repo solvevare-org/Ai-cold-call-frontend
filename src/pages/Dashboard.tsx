@@ -16,31 +16,14 @@ interface Campaign {
 }
 
 const Dashboard = () => {
-  const [hourlyData, setHourlyData] = useState<HourlyData[]>([
-    { hour: '9AM', calls: 30 },
-    { hour: '10AM', calls: 45 },
-    { hour: '11AM', calls: 35 },
-    { hour: '12PM', calls: 50 },
-    { hour: '1PM', calls: 60 },
-    { hour: '2PM', calls: 40 },
-    { hour: '3PM', calls: 55 },
-    { hour: '4PM', calls: 45 },
-    { hour: '5PM', calls: 65 },
-    { hour: '6PM', calls: 58 },
-    { hour: '7PM', calls: 42 },
-    { hour: '8PM', calls: 48 },
-  ]);
-  const [campaigns, setCampaigns] = useState<Campaign[]>([
-    { name: 'Tech Startups Outreach', calls: 450, status: 'Active' },
-    { name: 'Healthcare Solutions', calls: 230, status: 'Active' },
-    { name: 'Financial Services', calls: 680, status: 'Active' },
-    { name: 'Retail Businesses', calls: 120, status: 'Active' },
-  ]);
+  const [hourlyData, setHourlyData] = useState<HourlyData[]>([]);
+  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+  const [timeRange, setTimeRange] = useState<string>('24h');
 
   useEffect(() => {
     const fetchHourlyData = async () => {
       try {
-        const response = await axios.get('http://localhost:3001/api/dashboard/hourly');
+        const response = await axios.get(`http://localhost:3001/api/dashboard/hourly?range=${timeRange}`);
         setHourlyData(response.data);
       } catch (error) {
         console.error('Error fetching hourly data:', error);
@@ -50,6 +33,7 @@ const Dashboard = () => {
     const fetchCampaigns = async () => {
       try {
         const response = await axios.get('http://localhost:3001/api/dashboard/campaigns');
+        console.log('Fetched campaigns:', response.data);
         setCampaigns(response.data.filter((campaign: Campaign) => campaign.status === 'Active'));
       } catch (error) {
         console.error('Error fetching campaigns data:', error);
@@ -58,11 +42,10 @@ const Dashboard = () => {
 
     fetchHourlyData();
     fetchCampaigns();
-  }, []);
+  }, [timeRange]);
 
   const handleTimeRangeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    // Implement time range change logic here
-    console.log('Time range changed to:', event.target.value);
+    setTimeRange(event.target.value);
   };
 
   return (
@@ -99,9 +82,9 @@ const Dashboard = () => {
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-lg font-semibold">Hourly Call Volume</h2>
             <select className="px-3 py-2 border rounded-lg text-sm" onChange={handleTimeRangeChange}>
-              <option>Last 24 Hours</option>
-              <option>Last Week</option>
-              <option>Last Month</option>
+              <option value="24h">Last 24 Hours</option>
+              <option value="week">Last Week</option>
+              <option value="month">Last Month</option>
             </select>
           </div>
           <div className="h-80">

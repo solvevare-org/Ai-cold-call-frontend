@@ -17,7 +17,8 @@ interface ScheduleItem {
 const Schedule = () => {
   const [scheduleData, setScheduleData] = useState<ScheduleItem[]>([]);
   const [showScheduleForm, setShowScheduleForm] = useState<boolean>(false);
-  const [newSchedule, setNewSchedule] = useState<Partial<ScheduleItem>>({
+  const [newSchedule, setNewSchedule] = useState<ScheduleItem>({
+    id: 0,
     date: '',
     time: '',
     duration: '',
@@ -65,6 +66,7 @@ const Schedule = () => {
       console.log('Scheduled new call:', response.data);
       setScheduleData([...scheduleData, response.data]);
       setNewSchedule({
+        id: 0,
         date: '',
         time: '',
         duration: '',
