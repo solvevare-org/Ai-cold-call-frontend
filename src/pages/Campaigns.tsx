@@ -28,6 +28,7 @@ const Campaigns = () => {
     startDate: '',
     endDate: '',
   });
+  const [csvFile, setCsvFile] = useState<File | null>(null);
 
   useEffect(() => {
     const fetchCampaigns = async () => {
@@ -54,6 +55,12 @@ const Campaigns = () => {
     }));
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setCsvFile(e.target.files[0]);
+    }
+  };
+
   const handleAddCampaign = async () => {
     if (!newCampaign.name || !newCampaign.startDate || !newCampaign.endDate) {
       alert('Please fill in all required fields.');
@@ -61,7 +68,21 @@ const Campaigns = () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:3001/api/campaigns', newCampaign);
+      const formData = new FormData();
+      formData.append('name', newCampaign.name as string);
+      formData.append('status', newCampaign.status as string);
+      formData.append('startDate', newCampaign.startDate as string);
+      formData.append('endDate', newCampaign.endDate as string);
+      if (csvFile) {
+        formData.append('csvFile', csvFile);
+      }
+
+      const response = await axios.post('http://localhost:3001/api/campaigns', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
       setCampaignsData([...campaignsData, response.data]);
       setNewCampaign({
         name: '',
@@ -73,6 +94,7 @@ const Campaigns = () => {
         startDate: '',
         endDate: '',
       });
+      setCsvFile(null);
       setShowAddForm(false);
     } catch (error) {
       console.error('Error creating new campaign:', error);
@@ -152,6 +174,15 @@ const Campaigns = () => {
                   <option value="Paused">Paused</option>
                   <option value="Completed">Completed</option>
                 </select>
+              </div>
+              <div className="space-y-2 md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700">Import CSV</label>
+                <input
+                  type="file"
+                  accept=".csv"
+                  className="w-full px-3 py-2 border rounded-lg"
+                  onChange={handleFileChange}
+                />
               </div>
             </div>
             <div className="flex justify-end mt-4">

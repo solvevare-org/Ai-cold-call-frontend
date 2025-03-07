@@ -10,7 +10,8 @@ import {
   Settings as SettingsIcon,
   Phone,
   Menu,
-  X
+  X,
+  PhoneCall
 } from 'lucide-react';
 
 const Sidebar = () => {
@@ -23,6 +24,7 @@ const Sidebar = () => {
     { icon: MessageSquare, label: 'Conversations', path: '/conversations' },
     { icon: BarChart2, label: 'Analytics', path: '/analytics' },
     { icon: Target, label: 'Campaigns', path: '/campaigns' },
+    { icon: PhoneCall, label: 'Auto Dialer', path: '/autodialer' }, // Added Auto Dialer option
     { icon: SettingsIcon, label: 'Settings', path: '/settings' },
   ];
 

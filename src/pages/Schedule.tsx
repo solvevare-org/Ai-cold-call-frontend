@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { User, Phone } from 'lucide-react';
 import axios from 'axios';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 
 interface ScheduleItem {
   id: number;
@@ -198,7 +198,16 @@ const Schedule = () => {
                   <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                     <div className="flex flex-col md:flex-row gap-4">
                       <div className="flex flex-col items-center md:items-start">
-                        <span className="text-lg font-semibold text-gray-900">{format(new Date(`${item.date}T${item.time}`), 'hh:mm a')}</span>
+                        <span className="text-lg font-semibold text-gray-900">
+                          {(() => {
+                            try {
+                              return format(parseISO(`${item.date}T${item.time}`), 'hh:mm a');
+                            } catch (error) {
+                              console.error('Error formatting date:', error);
+                              return 'Invalid date';
+                            }
+                          })()}
+                        </span>
                         <span className="text-sm text-gray-500">{item.duration}</span>
                       </div>
                       <div>
