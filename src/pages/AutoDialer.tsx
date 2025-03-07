@@ -207,7 +207,10 @@ const AutoDialer = () => {
               <span>Settings</span>
             </button>
             <button className="px-4 py-2 bg-cyan-50 text-cyan-600 rounded-lg hover:bg-cyan-100">
-              Run this campaign
+              Run campaign
+            </button>
+            <button className="px-4 py-2 bg-cyan-50 text-cyan-600 rounded-lg hover:bg-cyan-100">
+              Stop campaign
             </button>
           </div>
         </div>
