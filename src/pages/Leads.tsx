@@ -3,7 +3,7 @@ import { Search, MoreVertical, Mail, Phone, MapPin, Trash2 } from 'lucide-react'
 import axios from 'axios';
 
 interface Lead {
-  id: number;
+  _id: string;
   name: string;
   company: string;
   email: string;
@@ -28,7 +28,7 @@ const Leads = () => {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [filterTerm, setFilterTerm] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState<string>('');
-  const [showDeleteOptions, setShowDeleteOptions] = useState<number | null>(null);
+  const [showDeleteOptions, setShowDeleteOptions] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchLeads = async () => {
@@ -76,12 +76,17 @@ const Leads = () => {
     }
   };
 
-  const handleDeleteLead = async (id: number) => {
+  const handleDeleteLead = async (_id: string) => {
+    console.log("Deleting lead with ID:", _id); // Debugging log
+    if (!_id) {
+      console.error("Lead ID is undefined or null. Cannot delete.");
+      return;
+    }
     try {
-      await axios.delete(`http://localhost:3001/api/leads/${id}`);
-      setLeadsData(leadsData.filter((lead) => lead.id !== id));
-    } catch (error) {
-      console.error('Error deleting lead:', error);
+      await axios.delete(`http://localhost:3001/api/leads/${_id}`);
+      setLeadsData(leadsData.filter((lead) => lead._id !== _id));
+    } catch (error: any) {
+      console.error("Error deleting lead: ", error);
     }
   };
 
@@ -93,8 +98,9 @@ const Leads = () => {
     setFilterTerm(e.target.value);
   };
 
-  const toggleDeleteOptions = (id: number) => {
-    setShowDeleteOptions((prev) => (prev === id ? null : id));
+  const toggleDeleteOptions = (_id: string) => {
+    console.log("Toggling delete options for ID:", _id); // Debugging log
+    setShowDeleteOptions((prev) => (prev === _id ? null : _id));
   };
 
   const filteredLeads = leadsData.filter((lead) => {
@@ -154,7 +160,7 @@ const Leads = () => {
           </thead>
           <tbody>
             {filteredLeads.map((lead) => (
-              <tr key={lead.id} className="border-b hover:bg-gray-50">
+              <tr key={lead._id} className="border-b hover:bg-gray-50">
                 <td className="px-6 py-4">
                   <div className="font-medium text-gray-900">{lead.name}</div>
                 </td>
@@ -189,14 +195,14 @@ const Leads = () => {
                 <td className="px-6 py-4 text-gray-600">{lead.lastContact}</td>
                 <td className="px-6 py-4">
                   <div className="relative">
-                    <button className="p-2 hover:bg-gray-100 rounded-full" onClick={() => toggleDeleteOptions(lead.id)}>
+                    <button className="p-2 hover:bg-gray-100 rounded-full" onClick={() => toggleDeleteOptions(lead._id)}>
                       <MoreVertical className="h-5 w-5 text-gray-400" />
                     </button>
-                    {showDeleteOptions === lead.id && (
+                    {showDeleteOptions === lead._id && (
                       <div className="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg z-10">
                         <button
                           className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:bg-gray-100 w-full text-left"
-                          onClick={() => handleDeleteLead(lead.id)}
+                          onClick={() => handleDeleteLead(lead._id)}
                         >
                           <Trash2 className="h-5 w-5 text-red-600" />
                           <span>Delete</span>

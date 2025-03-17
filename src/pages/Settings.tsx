@@ -1,4 +1,3 @@
-//// filepath: /c:/Users/Ahmer/Downloads/AI cold caller/project 2/react-frontend/src/pages/Settings.tsx
 import React, { useState, useEffect } from 'react';
 import { Bell, Phone, User, Shield, Database } from 'lucide-react';
 import { getSettings, updateSettings } from '../settingsService';

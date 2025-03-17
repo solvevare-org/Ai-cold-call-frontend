@@ -4,7 +4,7 @@ import axios from 'axios';
 import { format, parseISO } from 'date-fns';
 
 interface ScheduleItem {
-  id: number;
+  _id: string;
   date: string;
   time: string;
   duration: string;
@@ -18,7 +18,7 @@ const Schedule = () => {
   const [scheduleData, setScheduleData] = useState<ScheduleItem[]>([]);
   const [showScheduleForm, setShowScheduleForm] = useState<boolean>(false);
   const [newSchedule, setNewSchedule] = useState<ScheduleItem>({
-    id: 0,
+    _id: '',
     date: '',
     time: '',
     duration: '',
@@ -66,7 +66,7 @@ const Schedule = () => {
       console.log('Scheduled new call:', response.data);
       setScheduleData([...scheduleData, response.data]);
       setNewSchedule({
-        id: 0,
+        _id: '',
         date: '',
         time: '',
         duration: '',
@@ -77,9 +77,22 @@ const Schedule = () => {
       });
       setShowScheduleForm(false);
       setErrorMessage('');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error scheduling call:', error);
-      setErrorMessage('Failed to schedule call.');
+      if (axios.isAxiosError(error) && error.response) {
+        // Server responded with a status other than 200 range
+        console.error('Error response data:', error.response.data);
+        const errorMessage = error.response.data.message || 'Server error';
+        setErrorMessage(`Failed to schedule call: ${errorMessage}`);
+      } else if (error.request) {
+        // Request was made but no response received
+        console.error('Error request data:', error.request);
+        setErrorMessage('Failed to schedule call: No response from server.');
+      } else {
+        // Something else happened while setting up the request
+        console.error('Error message:', error.message);
+        setErrorMessage(`Failed to schedule call: ${error.message}`);
+      }
     }
   };
 
@@ -92,7 +105,7 @@ const Schedule = () => {
     <div className="space-y-6 p-4 md:p-6 lg:p-8">
       {loading ? (
         <div>Loading...</div>
-      ) : errorMessage ? (
+      ) : errorMessage && !showScheduleForm ? (
         <div className="text-red-500">{errorMessage}</div>
       ) : (
         <>
@@ -171,6 +184,11 @@ const Schedule = () => {
                     />
                   </div>
                 </div>
+                {errorMessage && (
+                  <div className="text-red-500 mt-4">
+                    {errorMessage}
+                  </div>
+                )}
                 <div className="flex justify-end mt-4">
                   <button
                     className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 mr-2"
@@ -194,14 +212,14 @@ const Schedule = () => {
               <div className="p-6 text-center text-gray-500">No scheduled calls.</div>
             ) : (
               scheduleData.map((item) => (
-                <div key={item.id} className="p-6 hover:bg-gray-50">
+                <div key={item._id} className="p-6 hover:bg-gray-50">
                   <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                     <div className="flex flex-col md:flex-row gap-4">
                       <div className="flex flex-col items-center md:items-start">
                         <span className="text-lg font-semibold text-gray-900">
                           {(() => {
                             try {
-                              return format(parseISO(`${item.date}T${item.time}`), 'hh:mm a');
+                              return format(parseISO(item.date), 'hh:mm a');
                             } catch (error) {
                               console.error('Error formatting date:', error);
                               return 'Invalid date';
