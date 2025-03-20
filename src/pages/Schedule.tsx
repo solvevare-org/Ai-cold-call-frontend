@@ -79,9 +79,9 @@ const Schedule = () => {
       ...prevSchedule,
       campaign: campaignId,
     }));
-  
+
     try {
-      const response = await axios.get(`http://localhost:3001/api/campaigns/${campaignId}/statuses`);
+      const response = await axios.get(`http://localhost:3001/api/schedule/${campaignId}/statuses`);
       console.log('Fetched statuses:', response.data); // Debugging
       setStatuses(response.data.map((status: any) => status.value)); // Map "value" instead of "name"
     } catch (error) {
@@ -89,7 +89,7 @@ const Schedule = () => {
       setStatuses([]); // Reset statuses if there's an error
     }
   };
-  
+
   // Handle form submission to schedule a new call
   const handleScheduleCall = async () => {
     if (!newSchedule.date || !newSchedule.time || !newSchedule.campaign || !newSchedule.totalCalls) {
