@@ -155,7 +155,7 @@ const Leads = () => {
               <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Location</th>
               <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Status</th>
               <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Last Contact</th>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600"></th>
+              <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Actions</th>
             </tr>
           </thead>
           <tbody>

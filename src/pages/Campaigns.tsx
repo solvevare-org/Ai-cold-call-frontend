@@ -1,6 +1,7 @@
 import { Search, Plus, BarChart2, Users, Calendar, Settings as SettingsIcon, Trash2, PauseCircle, PlayCircle } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 interface Campaign {
   _id: string; // Use _id for MongoDB ObjectId
@@ -17,6 +18,11 @@ interface Campaign {
 interface CSVHeader {
   header: string;
   mappedTo: string;
+}
+
+interface Lead {
+  // Define the structure of a lead
+  [key: string]: any;
 }
 
 const FIELD_MAPPING_OPTIONS = {
@@ -54,6 +60,9 @@ const Campaigns = () => {
   const [sampleData, setSampleData] = useState<string[][]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const [leads, setLeads] = useState<Lead[]>([]);
+  const [selectedCampaign, setSelectedCampaign] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   // Fetch campaigns on component mount
   useEffect(() => {
@@ -209,6 +218,23 @@ const Campaigns = () => {
         alert('Something went wrong');
       }
     }
+  };
+
+  // Fetch leads for a specific campaign
+  const fetchCampaignLeads = async (campaignId: string) => {
+    try {
+      const response = await axios.get(`http://localhost:3001/api/campaigns/${campaignId}/leads`);
+      setLeads(response.data);
+      setSelectedCampaign(campaignId);
+    } catch (error) {
+      console.error('Error fetching campaign leads:', error);
+      alert('Failed to fetch campaign leads. Please try again.');
+    }
+  };
+
+  // Handle campaign click to navigate to details page
+  const handleCampaignClick = (campaignId: string) => {
+    navigate(`/campaigns/${campaignId}`);
   };
 
   // Filter campaigns based on search term
@@ -393,7 +419,7 @@ const Campaigns = () => {
       <div className="grid gap-6">
         {filteredCampaigns.map((campaign) => (
           <div key={campaign._id} className="bg-white rounded-lg shadow">
-            <div className="p-6">
+            <div className="p-6" onClick={() => handleCampaignClick(campaign._id)}>
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900">{campaign.name}</h3>
@@ -511,6 +537,31 @@ const Campaigns = () => {
           </div>
         ))}
       </div>
+
+      {/* Leads List */}
+      {selectedCampaign && (
+        <div className="bg-white rounded-lg shadow p-6 mt-6">
+          <h3 className="text-lg font-semibold mb-4">Leads for Campaign {selectedCampaign}</h3>
+          <table className="min-w-full bg-white border">
+            <thead>
+              <tr>
+                {leads.length > 0 && Object.keys(leads[0]).map((key) => (
+                  <th key={key} className="py-2 px-4 border-b">{key}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {leads.map((lead, index) => (
+                <tr key={index}>
+                  {Object.values(lead).map((value, idx) => (
+                    <td key={idx} className="py-2 px-4 border-b">{value}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 };

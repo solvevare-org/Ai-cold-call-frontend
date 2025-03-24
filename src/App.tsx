@@ -8,6 +8,7 @@ import Schedule from './pages/Schedule';
 import Conversations from './pages/Conversations';
 import Analytics from './pages/Analytics';
 import Campaigns from './pages/Campaigns';
+import CampaignDetails from './pages/CampaignDetails';
 import Settings from './pages/Settings';
 
 function App() {
@@ -18,16 +19,16 @@ function App() {
         <div className="flex-1 flex flex-col overflow-hidden">
           <Header />
           <main className="flex-1 overflow-y-auto p-6">
-<Routes>
-  <Route path="/" element={<Dashboard />} />
-  <Route path="/leads" element={<Leads />} />
-  <Route path="/schedule" element={<Schedule />} />
-  <Route path="/conversations" element={<Conversations />} />
-  <Route path="/analytics" element={<Analytics />} />
-  <Route path="/campaigns" element={<Campaigns />} />
-  <Route path="/settings" element={<Settings />} />
-  <Route path="/autodialer" element={<AutoDialer />} /> // Add route for AutoDialer
-
+            <Routes>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/leads" element={<Leads />} />
+              <Route path="/schedule" element={<Schedule />} />
+              <Route path="/conversations" element={<Conversations />} />
+              <Route path="/analytics" element={<Analytics />} />
+              <Route path="/campaigns" element={<Campaigns />} />
+              <Route path="/campaigns/:id" element={<CampaignDetails />} />
+              <Route path="/settings" element={<Settings />} />
+              <Route path="/autodialer" element={<AutoDialer />} /> // Add route for AutoDialer
             </Routes>
           </main>
         </div>
